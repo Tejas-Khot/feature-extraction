@@ -29,6 +29,13 @@ net = loadcaffe.load(prototxt, binary)
 -- switch off dropout
 net:evaluate();
 
+function save_file(file_adr, group_adr, out_save)
+    local my_file=hdf5.open(file_adr, 'w');
+    my_file:write(group_adr, out_save);
+    my_file:close()
+end
+
+
 for i = 1, #dirlist do
 	images = neuralfeature.loadimagelist(dirlist[i])
 	out, labels=neuralfeature.extract(net, images)
@@ -41,9 +48,13 @@ for i = 1, #dirlist do
 
 	print(out_save:size())
 
-	myFile=hdf5.open("/home/profloo/Desktop/Train_SFEW_Features/" .. string.sub(dirlist[i],52) .. ".h5", 'w');
-	myFile:write("/home/profloo/Desktop/Train_SFEW_Features/" .. string.sub(dirlist[i],52) .. ".h5", out_save);
-	myFile:close()
+	save_file("/home/profloo/Desktop/Train_SFEW_Features/" .. string.sub(dirlist[i],52) .. ".h5",
+			   string.sub(dirlist[i],52),
+			   out_save)
+	-- myFile=hdf5.open("/home/profloo/Desktop/Train_SFEW_Features/" .. string.sub(dirlist[i],52) .. ".h5", 'w');
+	-- myFile:write("/home/profloo/Desktop/Train_SFEW_Features/" .. string.sub(dirlist[i],52) .. ".h5", out_save);
+	-- myFile:close()
 	collectgarbage()
 end
 print("Done!")
+
